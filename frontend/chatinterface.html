@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Interface</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating background shapes */
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+    }
+    .shape1 { width: 200px; height: 200px; background: #fff; top: -50px; left: -50px; }
+    .shape2 { width: 300px; height: 300px; background: #ffdd57; bottom: -100px; right: -100px; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .container {
+      width: 95%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      animation: fadeInUp 0.8s ease forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .chat-window {
+      height: 350px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 15px;
+      padding: 15px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .typing {
+      font-style: italic;
+      opacity: 0;
+      animation: typingAnim 2s infinite;
+    }
+
+    @keyframes typingAnim {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .send-btn {
+      background: #00e5ff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    button {
+      flex: 1;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .ai-btn { background: #00e5ff; color: #000; }
+    .ai-btn:hover { background: #00b5cc; animation: glowPulse 1.5s infinite ease-in-out; }
+
+    .psych-btn { background: #ffdd57; color: #000; }
+    .psych-btn:hover { background: #e6c349; animation: glowPulse 1.5s infinite ease-in-out; }
+
+    /* Animations */
+    @keyframes fadeInUp { 0% {opacity: 0; transform: translateY(20px);} 100% {opacity: 1; transform: translateY(0);} }
+    @keyframes glowPulse { 0% { box-shadow: 0 0 10px rgba(255,255,255,0.3);} 50% { box-shadow: 0 0 20px rgba(255,255,255,0.6);} 100% { box-shadow: 0 0 10px rgba(255,255,255,0.3);} }
+
+    /* Soft hover lift for container */
+    .container:hover { transform: scale(1.01); transition: 0.3s; }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      .header h2 { font-size: 22px; }
+      .chat-window { height: 300px; }
+      button { padding: 12px; font-size: 14px; }
+      .chat-input { font-size: 14px; padding: 10px; }
+      .send-btn { padding: 10px 15px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shape shape1"></div>
+  <div class="shape shape2"></div>
+
+  <div class="container">
+    <div class="header">
+      <h2>Welcome Back 👋</h2>
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+      <p><i class="typing">AI is typing...</i></p>
+    </div>
+
+    <div class="input-row">
+      <input type="text" class="chat-input" placeholder="Type your message..." />
+      <button class="send-btn">Send</button>
+    </div>
+
+    <div class="button-row">
+      <button class="ai-btn">Chat With AI</button>
+      <button class="psych-btn">Chat With Psychologist</button>
+    </div>
+  </div>
+
+  <script>
+    const sendBtn = document.querySelector('.send-btn');
+    const chatInput = document.querySelector('.chat-input');
+    const chatWindow = document.getElementById('chatWindow');
+
+    sendBtn.addEventListener('click', () => {
+      const message = chatInput.value.trim();
+      if(message) {
+        const p = document.createElement('p');
+        p.textContent = `You: ${message}`;
+        chatWindow.appendChild(p);
+        chatInput.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+    });
+  </script>
+</body>
+</html>
